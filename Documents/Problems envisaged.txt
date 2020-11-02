@@ -1,0 +1,13 @@
+﻿Problems envisaged
+
+
+* The shadows
+* Locate the tray
+* Different rocs( different color)
+* Reflect on glasses 
+* Parallax problem
+* Photo orientation
+* Different background
+* Rocs superposed
+* see stones outside the tray
+* different materials for tray

@@ -1,0 +1,11 @@
+﻿Different techniques envisaged
+
+
+Techniques for Segmenting:
+* K-Mean
+* MeanShift
+* Wavelet
+* Region growing
+* Region Splitting using RegionTrees
+* Watershed
+* Harris Corner Detection
