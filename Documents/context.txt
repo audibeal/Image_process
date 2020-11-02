@@ -1,0 +1,22 @@
+---- Setup number to full filename ----
+
+1 -- 14_brickFull_loose_wood_wood_45_clean.csv
+2 -- 28_brickFull_loose_black_black_45_clean.csv
+3 -- 28_brickFull_loose_grey_grey_45_clean.csv
+4 -- 28_brickFull_loose_teflon_teflon_45_clean.csv
+5 -- 28_brickFull_loose_wood_sand_45_clean.csv
+6 -- 28_brickFull_loose_wood_wood_45_clean.csv
+7 -- 28_brickFull_neat_wood_wood_45_clean.csv
+8 -- 28_brickHalf_loose_grey_grey_45_clean.csv
+9 -- 28_dice4_loose_teflon_teflon_45_clean.csv
+10 -- 28_dice4_loose_wood_wood_45_clean.csv
+11 -- 28_dice6_loose_grey_grey_45_clean.csv
+12 -- 28_dice6_loose_wood_wood_45_clean.csv
+13 -- 28_dice8_loose_grey_grey_45_clean.csv
+14 -- 28_dice8_loose_wood_wood_45_clean.csv
+15 -- 28_smallDice4_loose_black_black_45_clean.csv
+16 -- 28_smallDice4_loose_grey_grey_45_clean.csv
+17 -- 28_smallDice4_loose_teflon_teflon_45_clean.csv
+18 -- 28_smallDice4_loose_wood_wood_45_clean.csv
+19 -- 40_brickFull_loose_wood_wood_45_clean.csv
+20 -- 42_brickFull_loose_wood_wood_45_clean.csv
