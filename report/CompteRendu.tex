@@ -242,7 +242,7 @@ In the next example, red curve $A$ represents the set of all lines going through
 \includegraphics[width=6.8cm]{images/img19.png}\\
 source : \url{https://fr.wikipedia.org/wiki/Transform%C3%A9e_de_Hough}\\
 
-The 3 red lines cross in the same point, this point represent the unique line which going through $A$, $B$ and $C$.\\
+The 3 red lines cross in the same point, this point represents the unique line which going through $A$, $B$ and $C$.\\
 We will use this principle in the Hough's algorithm.
 
 \subsubsection{Hough alorithm}
@@ -366,11 +366,8 @@ $$\begin{bmatrix} a & b & c \\ d & e & f \\ g & h & 1 \end{bmatrix} \begin{bmatr
 Finally we define I(x,y) like : I(x,y) = I\textquoteright($\frac{x_0}{z_0}, \frac{y_0}{z_0}$)
 \vspace{1 cm}
 
-\textbf{Some results:}
-\begin{center}
-    \includegraphics[scale=0.4]{images/result_1.png}  
-    \includegraphics[scale=0.4]{images/resul_1.png}      
-\end{center}
+\textbf{Some results}\\
+\includegraphics[width=12cm]{images/img21.png}
 
 
 \section{Thresholding}
@@ -450,12 +447,58 @@ Our problem is complex, because all the photos are really different. In fact, th
 This is for instance visible in the next photos :\\
 \includegraphics[width=6.8cm]{images/img21.jpg} 
 \includegraphics[width=6.8cm]{images/img22.jpg}\\
-Thus we decide to cut the project in $2$ main parts :
-- The first part consists in searching for the $4$ sides of the trail (or the $4$ angulars, it is the same) and then apply an homography to extract the trail and suppress the projective effect of the photo.
-- The second part consists in searching for the position of the blocks in the extracted trail. Many strategies are tested and described in the next.
+Thus we decide to cut the project in $2$ main parts :\\
+ - The first part consists in searching for the $4$ sides of the trail (or the $4$ angulars, it is the same) and then apply an homography to extract the trail and suppress the projective effect of the photo.\\
+ - The second part consists in searching for the position of the blocks in the extracted trail. Many strategies are tested and described in the next.
 
 \subsection{Trail extraction}
 
 \subsection{Blocks detection}
+
+In this section, we suppose that for a given photo, we know the $4$ angulars of the trail.
+
+The first step consists in doing an homography to extract the trail and suppress the projective effect. An example is given below.
+
+\begin{center}
+    \includegraphics[scale=0.4]{images/result_1.png}  
+    \includegraphics[scale=0.4]{images/resul_1.png}      
+\end{center}
+
+The work is now to use the right picture to find and extract the blocks.\\
+Many strategies can be considered, we will have a look onthe mains ones we implemented.
+
+\subsubsection{Strategy 1 : Watershed segmentation}
+
+TO DO
+
+\subsubsection{Strategy 2 : Threshold and Contours}
+
+The first step of this strategy is simply a thresholding. The goal is to get an image similar to the next one :\\
+\includegraphics[width=7cm]{images/img23.png} \\
+To reach susch a threshold, we can simlpy use a color threshold. This threshold is particularly efficient when the trail is well illuminated, whitout shadow and with blocks of color different from the floor.\\
+Another mean to have such a threhold is to use the Otsu algorithm described earlier in this report.\\
+
+\textbf{Important remark}.\\
+In some case, we dispose of a photo of the trail before the rocks fall. This image can exploted in the same manner than the previous photos. That is to say that we can extract the trail, this will be particularly usefull as we will see soon.\\
+
+One idea that we can exploit is to substract the empty trail with the full one. This give us the next result :\\ 
+
+\includegraphics[width=14cm]{images/img22.png} \\
+This operation is particularly interesting because it delete the white band, and other default of the image like the 'IKEA' written on the angular.\\
+The threshold method are now more efficient because with have in the final image $2$ main colors.\\
+
+For instance, an Otsu threshold on the previous image will give :\\
+\includegraphics[width=7cm]{images/img24.png}\\
+
+However, you can constat that some defaults exist on the image. These defaults are due to little movements of the camera (in the case of the photo substraction) or threshold errors otherwise.\\
+
+This issue is easily solved thanks to an opening operation (see morphological transformations before).
+If we apply succesively an erosin and a dilation on our image, we get :\\
+\includegraphics[width=14cm]{images/img25.png}\\ 
+
+
+\section{Python Application}
+
+To do
 
 \end{document}
