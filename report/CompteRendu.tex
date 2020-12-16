@@ -14,6 +14,9 @@
 \usepackage{hyperref}
 \usepackage{algorithm}
 \usepackage{algorithmic}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{dsfont}
 \setcounter{secnumdepth}{4}
 
 
@@ -280,13 +283,129 @@ We sow how we can use Hough algorithm to detect lines in an image. But in realit
 Let's take the example of circles.\\
 We know that a circle can be reprensed by $3$ parameters. $a$ and $b$ such that $(a, b)$ is the center our the circle, and $r$ its radius. (Recall that the circle equation is $(x – a)^2 + (y – b)^2 = r^2$).\\
 Then the process is the same but this time the accumulator is a discretisation of all the possible $a$, $b$ and $r$.
-
+\newpage
 
 \section{Homography}
+In our case, we have many parallaxes problems. To solve this issue, Homography is used.
+Example of parallaxe issu:
+\begin{center}
+    \includegraphics[scale=0.7]{images/parallax.png}    
+\end{center}
+\vspace{0.5 cm}
+
+As reminder any two images of the same planar surface in space are related by a homography.We want to use this theory to return the tray to its original shape, i.e. a rectangle.
+Before that It?s necessary to introduce an important mathematics notion, which is Homogenous coordinates.\\
+This notion make it possible to characterise transformations in space with matrix.
+Basically A point in cartesian coordinates, (X,Y) becomes  (X,Y,W)  in homogeneous coordinates.
+\vspace{0.5 cm}
+
+\begin{center}
+    \includegraphics[scale=0.5]{images/homoge.png}  
+    \includegraphics[scale=0.5]{images/homoge_2.png}      
+\end{center}
+
+In our case, transforming something like a parallelogram into a rectangle is called an affine transformation.  This transformation is obtained by applying the following matrix:
+ $$H = \begin{bmatrix} a & b & c \\ d & e & f \\ g & h & 1 \end{bmatrix} $$.
+ 
+ We want to find the matrix H such that for all pixels (x,y) in our picture where our tray is rectangular and ($x_0$,$y_0$) corresponding pixel to (x,y) in our original picture:
+ $$\begin{bmatrix} a & b & c \\ d & e & f \\ g & h & 1 \end{bmatrix} \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}  = \begin{bmatrix} x_0 \\ y_0 \\ z_0 \end{bmatrix}$$
+ 
+ We can see that or equation depends on a new a paramter $z_0$. This parameter has a scaling role. The first step to find all pwith 
+$$ x' = x_0 / z_0 $$
+$$ y' = y_0 / z_0 $$
+
+We can also write :
+$$ z_0 \begin{bmatrix} x' \\ y' \\ 1 \end{bmatrix} = \begin{bmatrix} a & b & c \\ d & e & f \\ g & h & 1 \end{bmatrix} \begin{bmatrix} x \\ y \\ 1 \end{bmatrix} $$
+
+By eliminating $c$ we can formulate the above equation in the form.
+\begin{equation}
+\left\lbrace
+\begin{array}{ccc}
+z_0 = gx + hy + 1 \\
+x' \times z_0 = ax + by + c \\
+y' \times z_0 = dx + ey + f
+\end{array}\right.
+\end{equation}
+
+\begin{equation}
+\left\lbrace
+\begin{array}{ccc}
+x' \times (gx + hy + 1) = ax + by + c \\
+y' \times (gx + hy + 1) = dx + ey + f
+\end{array}\right.
+\end{equation}
+
+\begin{equation}
+\left\lbrace
+\begin{array}{ccc}
+ax + by + c  -  x'gx - x'hy - x' = 0\\
+dx + ey + f - y'gx - y'hy - y' = 0
+\end{array}\right.
+\end{equation}
+
+We get :
+
+$$Ah = 0$$
+
+with
+
+$$ A = \begin{bmatrix} x & y & 1 & 0 & 0 & 0 & -x'x & -x'y & -x'  \\ 0 & 0 & 0 & x & y & 1 & -y'x & -y'y & -y' \end{bmatrix} $$
+and
+$$ h = \begin{bmatrix} a & b & c & d & e & f & g & h & 1  \end{bmatrix}^T $$
+
+We can easily conclude that we have 8 unknown variables and if we know the correspondence between two pixels of the two images it gives us two equations. Basically we will use the 4 angles of the plate which are the easiest pixels to recognize.
+
+To summary if you want to obtain our rectangular tray :\\
+Note the function I(x,y) which takes as input the coordinates of a pixel of the target image and returns its colour. \\
+Note the function I\textquoteright(x,y) which takes as input the coordinates of a pixel of the initial image and returns its colour.
+\vspace{ 1 cm}
+
+To calculate I(x,y):
+We use the previous equation :
+$$\begin{bmatrix} a & b & c \\ d & e & f \\ g & h & 1 \end{bmatrix} \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}  = \begin{bmatrix} x_0 \\ y_0 \\ z_0 \end{bmatrix}$$
+Finally we define I(x,y) like : I(x,y) = I\textquoteright($\frac{x_0}{z_0}, \frac{y_0}{z_0}$)
+\vspace{1 cm}
+
+\textbf{Some results:}
+\begin{center}
+    \includegraphics[scale=0.4]{images/result_1.png}  
+    \includegraphics[scale=0.4]{images/resul_1.png}      
+\end{center}
+
 
 \section{Thresholding}
 
 \subsection{Otsu method}
+The OTSU method is used to perform automatic thresholding based on the shape of the image histogram.
+This method applies to greyscale images and assumes that these images are composed of two classes which are the background and the objects.
+This method has for goal to minimize the intra-class variance:\\
+\\
+
+First step is to create an Histogram function. The goal of hist(k) is to count the number of pixel equal to k. 
+$$Hist(k) = \sum_{x,y} \mathds{1}_{I(x,y) = k} $$
+Where I(x,y) is the intensity of pixel (x,y)
+
+\vspace{0.5 cm}
+
+The goal of our algorithm is to minimize the intra-class variance between our two classes.
+Note the threshold : t
+
+$$\sigma_w^2(t) = w_1(t)\sigma_1(t) + w_2(t)\sigma_2(t)$$
+\\
+where: 
+\begin{itemize}
+ \item $w_1(t) = \sum_{k = 0}^t \frac{Hist(k)}{N}$ probability to be in classe 1 and $w_2(t) = 1 - w1(t) $probability to be in classe 2
+ \item $\sigma_i$ variance of class i.
+\end{itemize}
+\vspace{1 cm}
+\textbf{Algorithm :}
+\begin{enumerate}
+\item  Calculate histogram function 
+\item  for all possible t $\in \{0..255\}$ compute $\sigma_w^2(t)$ 
+\item Find t which minimizes $\sigma_w^2(t)$ 
+\item Transform or picture in binary image
+\end{enumerate}
+\vspace{1 cm}
 
 \section{Morphological Transformations}
 
