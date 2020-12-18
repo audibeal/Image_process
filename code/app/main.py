@@ -1,4 +1,6 @@
 from ExtractionTray import *
+from homography import *
+from BlocksExtraction import *
 
 def checkFileExistance(filePath):
     try:
@@ -62,7 +64,13 @@ def main():
         if confirm == "n":
             liste_corners = find_angulars_manualy(cv2.imread(img))
 
-        print(liste_corners)
+        print("Corners successfully saved.")
+        print(">> Homography...")
+        homog(liste_corners, img)
+        print("New image successfully saved.")
+        print(">> Blocks hunting ...")
+        
+        extract("results/" + img.split('.')[-2].split("/")[-1]  +".jpg")
 
 
 
