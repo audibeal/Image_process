@@ -21,7 +21,7 @@
 
 
 \title{\textbf{Image processing for extracting features}}
-\author{Clément Chenevas-Paule, Alexandre Audibert}
+\author{Clément Chenevas-Paule, Alexandre Audibert, Daria Senshina, Roman Kozhevnykov}
 \date{2020/2021}
 \makeindex
 \begin{document}
@@ -467,11 +467,9 @@ The first step consists in doing an homography to extract the trail and suppress
 The work is now to use the right picture to find and extract the blocks.\\
 Many strategies can be considered, we will have a look onthe mains ones we implemented.
 
-\subsubsection{Strategy 1 : Watershed segmentation}
+\subsubsection{Strategy : Threshold and Contours}
 
-TO DO
-
-\subsubsection{Strategy 2 : Threshold and Contours}
+\textbf{First mask}
 
 The first step of this strategy is simply a thresholding. The goal is to get an image similar to the next one :\\
 \includegraphics[width=7cm]{images/img23.png} \\
@@ -493,16 +491,89 @@ For instance, an Otsu threshold on the previous image will give :\\
 However, you can constat that some defaults exist on the image. These defaults are due to little movements of the camera (in the case of the photo substraction) or threshold errors otherwise.\\
 
 This issue is easily solved thanks to an opening operation (see morphological transformations before).
-If we apply succesively an erosin and a dilation on our image, we get :\\
+If we apply succesively an erosion and a dilation on our image, we get :\\
 \includegraphics[width=14cm]{images/img25.png}\\ 
 
+Now we have got a mask, the first idea is to extract contours of this mask and to take the more little circle which contain each contours. Such a operation allows us to get contours around the white parts. As an exmple we get :\\
+\includegraphics[width=8cm]{images/img26.png}\\
 
-\subsubsection{Strategy 3 : Connex conponents}
+This result is interesting because we are already able to find the isolated blocks. However, when several blocks are regrouped, the circle covers all the blocks of the group. This is not the good result but some peaces of information can be extracted from it. Indeed the radius of the circle is bigger when the number of blocks in the group increases. But this is insufficient and we have to continue the process on the image.\\
 
-To do
+\textbf{Second mask}
+
+To separate blocks in a group, the idea is to exploit the fact that the blocks are separated by an edge. Then we will use the previous mask, apply it on the originial image, and then use a Canny edge detector to find the separation between the blocks. Here an example of application of this procedure :\\
+\includegraphics[width=6.8cm]{images/img27.png} 
+\includegraphics[width=6.8cm]{images/img28.png}\\
+
+As we can see, the Canny filter extract all the edges ; the edges that we want and also the edges we don't want. The main example of bad detected edges is the circles corresponding to the black hole of the brocks. Nevertheless, we know a method to localize circles on an image, this is the Hough transform for circles that we already talk about. In addition, we can see that all the circles we want to remove have the same size. So let's remove all the detected circles of this size.\\
+\includegraphics[width=6.8cm]{images/img29.png} 
+\includegraphics[width=6.8cm]{images/img30.png}\\
+In green appears all the detected circles with the good size, on the right their is the image without the circles.\\
+
+The next is quite simple, we will invert the last image (the white becomes black and the black becomes white) and add it with the previous mask. In additon, all the detected circles are colored in white. We get a new mask, as we can see below.\\
+\includegraphics[width=8cm]{images/img31.png}\\
+
+If we draw the circles around each contours the new result will be really different from the previous one. This is due to the new mask which is more complexe than the first one. As a example, we get for two different images : \\
+\includegraphics[width=6.8cm]{images/img32.png} 
+\includegraphics[width=6.8cm]{images/img33.png}\\
+
+\textbf{Circles filtering}
+
+The problem is now clear, we have too many circles. To solve this issue we have applyied different circles filtering.
+\begin{itemize}
+ \item Little circles filtering : we suppress all the circles under a radius threshold.
+ \item Interlocked circles filtering : we can see that a lot of circles are inside a bigger circle, in such a case we suppres it.
+ \item Medium circles reunion : if two circles with medium size are really near, we suppress them and create a new circle which is bigger and centered in the average of the two previous centers.
+ \item Big circles processing : if a circle exceed a threshold size, we consider that it corresonds to two blocks. As a result we suppres it we add the the two biggest circles which were inside the big circle.
+\end{itemize}
+
+If we apply all this procedure to the previous examples, we get the new result : \\
+\includegraphics[width=6.8cm]{images/img34.png} 
+\includegraphics[width=6.8cm]{images/img35.png}\\
+
+Now we have just to extract the center of each circle.
+
+\subsection{Limitations}
+
+The procedure described before is only available for the red blocks on a wood tray, but it can be easily updated for other kind of blocks and trays.\\
+
+
+\begin{minipage}{.6\textwidth}%
+In addition, this procedure is not really resistant to shadows as we can see the the next picture.
+\end{minipage}%
+\hfill
+\begin{minipage}{.35\textwidth}%
+\includegraphics[width=\textwidth]{images/img36.png}
+\end{minipage}%
+
+\begin{minipage}{.6\textwidth}%
+\includegraphics[width=\textwidth]{images/img37.png}
+\end{minipage}%
+\hfill
+\begin{minipage}{.35\textwidth}%
+In the same way, the procedure is not really resistant to low brigtness.
+\end{minipage}%
 
 \section{Python Application}
 
-To do : explain the fonctionality of the python app
+\subsection{Instructions manual}
+
+The application contains several repository :\\
+\begin{itemize}
+\item ./CSV   the folder in which the csv files will be saved.
+\item ./tests  the folder contains some photos in order to  test the app.
+\item ./results  the folder in which the result images are saved.
+\end{itemize}
+
+The application can be easily launch with the command : \\
+python ./main.py\\
+
+to do
+
+
+
+\subsection{Protocol for photography}
+
+to do
 
 \end{document}
